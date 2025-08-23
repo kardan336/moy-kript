@@ -1,0 +1,52 @@
+# Build artifacts
+*.exe
+*.obj
+*.lib
+*.dll
+*.pdb
+*.ilk
+*.exp
+*.log
+
+# Visual Studio
+.vs/
+Debug/
+Release/
+x64/
+x86/
+*.sln.docstates
+*.suo
+*.user
+*.VC.db
+*.VC.opendb
+
+# Temporary files
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+
+# Stub generation artifacts
+stub_build.cpp
+stub_build.exe
+test_stub.exe
+
+# Test binaries
+tests/test_functions
+tests/test_enhanced
+tests/test_stub_generation
+
+# Tools directory (optional third-party tools)
+tools/
+
+# MinGW object files
+*.o
+
+# Backup files
+*.bak
+*.backup
+
+# IDE files
+*.vcxproj.filters
+*.vcxproj.user

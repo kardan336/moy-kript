@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <windows.h>
 
 static HWND hLog = nullptr;
 
@@ -17,12 +18,42 @@ void LogSpecial(HWND hLog, const std::wstring& msg) {
 
 std::vector<uint8_t> ReadFileW(const std::wstring& path) {
     std::ifstream in(path, std::ios::binary);
-    return std::vector<uint8_t>((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+    if (!in) {
+        return std::vector<uint8_t>();
+    }
+    
+    // Get file size
+    in.seekg(0, std::ios::end);
+    auto size = in.tellg();
+    in.seekg(0, std::ios::beg);
+    
+    // Check for reasonable file size (max 256MB)
+    if (size < 0 || size > 0x10000000) {
+        return std::vector<uint8_t>();
+    }
+    
+    std::vector<uint8_t> data(static_cast<size_t>(size));
+    in.read(reinterpret_cast<char*>(data.data()), size);
+    
+    if (!in) {
+        return std::vector<uint8_t>();
+    }
+    
+    return data;
 }
 
-void SaveFileW(const std::wstring& path, const std::vector<uint8_t>& data) {
+bool SaveFileW(const std::wstring& path, const std::vector<uint8_t>& data) {
+    if (data.empty()) {
+        return false;
+    }
+    
     std::ofstream out(path, std::ios::binary);
-    out.write((const char*)data.data(), data.size());
+    if (!out) {
+        return false;
+    }
+    
+    out.write(reinterpret_cast<const char*>(data.data()), data.size());
+    return out.good();
 }
 
 void DoSpecialCrypt(HWND hDlg) {
@@ -30,23 +61,52 @@ void DoSpecialCrypt(HWND hDlg) {
     GetDlgItemTextW(hDlg, IDC_SPECIAL_SRC, src, MAX_PATH-1);
     GetDlgItemTextW(hDlg, IDC_SPECIAL_DST, dst, MAX_PATH-1);
 
+    // Null-terminate for safety
+    src[MAX_PATH-1] = L'\0';
+    dst[MAX_PATH-1] = L'\0';
+
     if (!*src || !*dst) {
         LogSpecial(hLog, L"[Ошибка] Укажите оба пути к файлам!\r\n");
         return;
     }
+    
+    LogSpecial(hLog, L"[Инфо] Начало обработки файла...\r\n");
+    
     auto exe = ReadFileW(src);
     if (exe.empty()) {
-        LogSpecial(hLog, L"[Ошибка] Не удалось прочитать исходный EXE.\r\n");
+        LogSpecial(hLog, L"[Ошибка] Не удалось прочитать исходный EXE или файл пустой.\r\n");
         return;
     }
+    
+    // Basic PE validation
+    if (exe.size() < sizeof(IMAGE_DOS_HEADER)) {
+        LogSpecial(hLog, L"[Ошибка] Файл слишком мал для PE.\r\n");
+        return;
+    }
+    
+    auto dosHeader = reinterpret_cast<const IMAGE_DOS_HEADER*>(exe.data());
+    if (dosHeader->e_magic != IMAGE_DOS_SIGNATURE) {
+        LogSpecial(hLog, L"[Ошибка] Файл не является валидным PE.\r\n");
+        return;
+    }
+    
+    LogSpecial(hLog, L"[Инфо] Генерация уникальной оболочки...\r\n");
+    
     // Генерируем уникальную оболочку
     std::vector<uint8_t> stub;
     if (!GenerateRandomizedStub(exe, stub)) {
-        LogSpecial(hLog, L"[Ошибка] Не удалось создать оболочку.\r\n");
+        LogSpecial(hLog, L"[Ошибка] Не удалось создать оболочку. Проверьте наличие MinGW g++.\r\n");
         return;
     }
-    SaveFileW(dst, stub);
-    LogSpecial(hLog, L"[OK] Особая шифровка завершена!\r\n");
+    
+    if (!SaveFileW(dst, stub)) {
+        LogSpecial(hLog, L"[Ошибка] Не удалось сохранить результат.\r\n");
+        return;
+    }
+    
+    LogSpecial(hLog, L"[OK] Особая шифровка завершена! Размер: ");
+    LogSpecial(hLog, std::to_wstring(stub.size()));
+    LogSpecial(hLog, L" байт\r\n");
 }
 
 INT_PTR CALLBACK SpecialCryptTabProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {

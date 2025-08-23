@@ -1,24 +1,46 @@
 # WinCryptor
 
-Пример консольного приложения C++ для Windows (Visual Studio 2019/2022, x64, C++17).
+WinCryptor — кроссплатформенное приложение для шифрования/дешифрования данных на C++.
+
+## Возможности
+- Простое шифрование/дешифрование строк.
+- Поддержка Visual Studio и CMake.
+- Легко расширяем для добавления новых алгоритмов.
 
 ## Сборка
 
-1. Откройте `WinCryptor.sln` в Visual Studio.
-2. Выберите платформу `x64` и конфигурацию `Debug` или `Release`.
-3. Постройте и запустите проект (`Ctrl+F5`).
+### Visual Studio
+1. Откройте `WinCryptor.sln` или `.vcxproj` в Visual Studio.
+2. Постройте проект (Ctrl+Shift+B).
 
-## Структура
+### CMake (Windows/Unix)
+```bash
+mkdir build
+cd build
+cmake ..
+cmake --build .
+```
 
-- `WinCryptor/` — исходники проекта (main.cpp, WinCryptor.cpp, WinCryptor.h, WinCryptor.vcxproj)
-- `.gitignore` — исключает временные/служебные файлы
-- `README.md` — инструкция
-- `WinCryptor.sln` — файл решения Visual Studio
+## Тестирование
 
-## Пример вывода
+```bash
+ctest --output-on-failure
+```
+
+## Структура проекта
 
 ```
-Original: Hello, WinCryptor!
-Encrypted: !rotpyrcniW ,olleH
-Decrypted: Hello, WinCryptor!
+WinCryptor/
+ ├── WinCryptor.h / WinCryptor.cpp
+ ├── main.cpp
+ ├── tests/
+ │    └── test_wincryptor.cpp
+ ├── CMakeLists.txt
+ ├── README.md
+ ├── .gitignore
+ └── LICENSE
 ```
+
+## Зависимости
+- C++17 или новее
+- Для тестов — Google Test

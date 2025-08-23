@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <random>
+#include <algorithm>
 #include <ctime>
 #include <windows.h>
 #include <vector>

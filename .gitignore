@@ -13,10 +13,39 @@
 Debug/
 Release/
 x64/
+x86/
 build/
+bin/
+obj/
 *.obj
 *.exe
+*.pdb
+*.ilk
 *.log
+*.tlog
+*.idb
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Logs and temporary files
+log.txt
+*.tmp
+*.temp
+
+# Archives
+*.zip
+*.rar
+*.7z
+
+# IDE files
+*.vcxproj.user
+*.vcxproj.filters
 
 # Other
-*.zip
+*.bak
+*.orig
+*~

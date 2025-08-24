@@ -1,23 +1,33 @@
 #include "resource.h"
 #include <windows.h>
 
-IDD_MAIN_DIALOG DIALOGEX 0, 0, 320, 200
+// Главное диалоговое окно
+IDD_MAIN_DIALOG DIALOGEX 0, 0, 400, 300
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "WinCryptor"
+CAPTION "WinCryptor - Улучшенная версия"
 FONT 9, "Segoe UI", 0, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_TAB,"SysTabControl32",WS_TABSTOP,10,10,300,20
-    CONTROL         "",IDD_TAB_CLOUD_CRYPT,"Button",WS_CHILD | WS_VISIBLE,10,40,300,120
-    PUSHBUTTON      "Сменить язык",IDC_LANG_SWITCH,200,170,100,20
-END
-
-IDD_TAB_CLOUD_CRYPT DIALOGEX 0,0,300,120
-STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
-FONT 9, "Segoe UI", 0, 0, 0x1
-BEGIN
-    LTEXT           "Исходный файл:",-1,10,10,80,8
-    EDITTEXT        IDC_SPECIAL_SRC,100,10,150,12,ES_AUTOHSCROLL
-    LTEXT           "Результат:",-1,10,30,80,8
-    EDITTEXT        IDC_SPECIAL_DST,100,30,150,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "Зашифровать",IDC_SPECIAL_CRYPT,10,60,100,20
+    GROUPBOX        "Входной файл", -1, 10, 10, 380, 40
+    LTEXT           "Файл:", -1, 20, 28, 30, 8
+    EDITTEXT        IDC_INPUT_FILE, 55, 25, 250, 14, ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "Обзор...", IDC_BROWSE_INPUT, 315, 25, 60, 14
+    
+    GROUPBOX        "Выходной файл", -1, 10, 60, 380, 40
+    LTEXT           "Файл:", -1, 20, 78, 30, 8
+    EDITTEXT        IDC_OUTPUT_FILE, 55, 75, 250, 14, ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "Обзор...", IDC_BROWSE_OUTPUT, 315, 75, 60, 14
+    
+    GROUPBOX        "Ключ шифрования", -1, 10, 110, 380, 40
+    LTEXT           "Ключ:", -1, 20, 128, 30, 8
+    EDITTEXT        IDC_KEY, 55, 125, 320, 14, ES_AUTOHSCROLL
+    
+    GROUPBOX        "Операции", -1, 10, 160, 380, 60
+    PUSHBUTTON      "Зашифровать файл", IDC_ENCRYPT, 20, 180, 110, 25
+    PUSHBUTTON      "Расшифровать файл", IDC_DECRYPT, 140, 180, 110, 25
+    PUSHBUTTON      "Инъекция в процесс", IDC_INJECT, 260, 180, 110, 25
+    
+    GROUPBOX        "Статус", -1, 10, 230, 380, 40
+    LTEXT           "Готов к работе", IDC_STATUS, 20, 248, 360, 8
+    
+    DEFPUSHBUTTON   "Закрыть", IDCANCEL, 340, 280, 50, 14
 END
